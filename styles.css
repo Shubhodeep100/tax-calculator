@@ -22,7 +22,7 @@ body {
 .form {
   background-color: white;
   padding: 1rem;
-  max-width: 450px;
+  max-width: 550px;
   border-radius: 0.5rem;
   box-shadow: 8px 10px 15px 13px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -34,7 +34,11 @@ body {
 
 .input-container {
   position: relative;
-  padding: 0 1rem; /* Equal padding on the X-axis */
+  padding: 0 1rem;
+}
+
+.form-select{
+    width: 100%;
 }
 
 .input-container input,
@@ -82,7 +86,6 @@ body {
     #0575e6
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
-
 
 .modal {
   display: none;
