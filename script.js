@@ -92,9 +92,6 @@ $(document).ready(function () {
         totalIncome.toFixed(2) +
         "</p>" 
         
-        // "<p>Tax Amount: " +
-        // taxAmount.toFixed(2) +
-        // "</p>"
     );
     $("#resultModal").modal("show");
   }
