@@ -94,20 +94,21 @@
 
     <!-- Modal -->
     <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel"
-        aria-hidden="true">
+        aria-hidden="true" style="padding: 6rem;">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
+            <div class="modal-content" style="padding: 1rem;">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="resultModalLabel">
-                        Tax Calculation Result
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <p class="modal-title" id="resultModalLabel" style="text-align: center; font-weight: 600; margin-left: 2rem; font-size: 25px;">
+                       Your overall income will be
+                    </p>
+                  
                 </div>
-                <div class="modal-body" id="resultBody">
+                <div class="modal-body" id="resultBody" style="text-align: center;">
                     <!-- Result will be displayed here -->
                 </div>
+                <p style="font-size: 10px; text-align: center;">after tax deductions</p>
+
+                <button type="button" class="btn btn-primary" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin: auto; margin-bottom: 1rem; margin-top: 2rem;">Close</button>
             </div>
         </div>
     </div>

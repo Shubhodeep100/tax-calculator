@@ -88,12 +88,13 @@ $(document).ready(function () {
     var taxAmount = totalIncome > 800000 ? (totalIncome - 800000) * taxRate : 0;
 
     $("#resultBody").html(
-      "<p>Total Income: " +
+      "<p>" +
         totalIncome.toFixed(2) +
-        "</p>" +
-        "<p>Tax Amount: " +
-        taxAmount.toFixed(2) +
-        "</p>"
+        "</p>" 
+        
+        // "<p>Tax Amount: " +
+        // taxAmount.toFixed(2) +
+        // "</p>"
     );
     $("#resultModal").modal("show");
   }
