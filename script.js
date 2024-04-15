@@ -1,131 +1,108 @@
-// Select all the input fields and the submit button
-const incomeInput = document.querySelector(
-  ".form input[placeholder='Enter gross annual income']"
-);
-const extraIncomeInput = document.querySelector(
-  ".form input[placeholder='Enter extra income']"
-);
-const ageInput = document.querySelector(
-  ".form input[placeholder='Enter age group']"
-);
-const deductionsInput = document.querySelector(
-  ".form input[placeholder='Enter total applicable deductions']"
-);
-const submitButton = document.querySelector(".form .submit");
-
-// Select the error icon container elements
-const incomeErrorIcon = incomeInput.nextElementSibling;
-const extraIncomeErrorIcon = extraIncomeInput.nextElementSibling;
-const ageErrorIcon = ageInput.nextElementSibling;
-const deductionsErrorIcon = deductionsInput.nextElementSibling;
-
-// Add event listeners to the input fields
-incomeInput.addEventListener("input", validateInput);
-extraIncomeInput.addEventListener("input", validateInput);
-ageInput.addEventListener("input", validateInput);
-deductionsInput.addEventListener("input", validateInput);
-
-// Function to validate input fields and show/hide error icons
-function validateInput(event) {
-  const inputField = event.target;
-  const errorIconContainer = inputField.nextElementSibling;
-
-  // Validate the input value
-  if (isNaN(inputField.value) || inputField.value < 0) {
-    errorIconContainer.style.display = "inline-block";
-    errorIconContainer.title = "Please enter a valid number";
-  } else {
-    errorIconContainer.style.display = "none";
+document.addEventListener("DOMContentLoaded", function () {
+  setupInputValidation("income", "incomeError");
+});
+document.addEventListener("DOMContentLoaded", function () {
+  setupInputValidation("extraIncome", "extraIncomeError");
+});
+document.addEventListener("DOMContentLoaded", function () {
+  setupInputValidation("deductions", "deductionsError");
+});
+function setupInputValidation(incomeInputId, incomeErrorId) {
+  const incomeInput = document.getElementById(incomeInputId);
+  const incomeError = document.getElementById(incomeErrorId);
+  hideErrorTooltip();
+  function showErrorTooltip() {
+    incomeError.style.display = "inline";
+    incomeInput.title = "Please enter a valid number";
   }
+
+  function hideErrorTooltip() {
+    incomeError.style.display = "none";
+    incomeInput.title = "";
+  }
+
+  incomeInput.addEventListener("input", function () {
+    const value = incomeInput.value;
+    const isValidNumber = /^[0-9]*$/.test(value);
+
+    if (!isValidNumber) {
+      showErrorTooltip();
+    } else {
+      hideErrorTooltip();
+    }
+  });
 }
 
-// Add event listener to the submit button
-submitButton.addEventListener("click", calculateTax);
-
-// Function to calculate the tax and display the results in a modal
-function calculateTax(event) {
-  event.preventDefault(); // Prevent the default form submission
-
-  // Get the user's inputs
-  const grossAnnualIncome = parseFloat(incomeInput.value);
-  const extraIncome = parseFloat(extraIncomeInput.value);
-  const age = parseFloat(ageInput.value);
-  const deductions = parseFloat(deductionsInput.value);
-
-  // Validate the age input
-  if (
-    isNaN(age) ||
-    age < 0 ||
-    age >= 60 ||
-    (age >= 40 && age < 60) ||
-    age < 40
-  ) {
-    ageErrorIcon.style.display = "inline-block";
-    ageErrorIcon.title = "Please enter a valid age group";
-    return; // Exit the function if the age input is invalid
-  } else {
-    ageErrorIcon.style.display = "none";
+$(document).ready(function () {
+  function showErrorIcon(fieldId, message) {
+    var errorIcon = $("#" + fieldId + "Error");
+    errorIcon.attr("title", message).show();
   }
 
-  // Calculate the overall income
-  const overallIncome = grossAnnualIncome + extraIncome - deductions;
+  function hideErrorIcon(fieldId) {
+    var errorIcon = $("#" + fieldId + "Error");
+    errorIcon.attr("title", "").hide();
+  }
+  function validateInputs() {
+    var valid = true;
+    $("input[type='text']").each(function () {
+      var fieldValue = $(this).val();
+      if (!/^\d*\.?\d*$/.test(fieldValue)) {
+        valid = false;
+        showErrorIcon(
+          $(this).attr("id"),
+          "Invalid input! Please enter a valid number."
+        );
+      } else {
+        hideErrorIcon($(this).attr("id"));
+      }
+    });
+    if ($("#age").val() === "") {
+      valid = false;
+      showErrorIcon("age", "Age is mandatory!");
+    } else {
+      hideErrorIcon("age");
+    }
+    return valid;
+  }
 
-  // Calculate the tax based on the overall income and age
-  let taxRate = 0;
-  let taxAmount = 0;
+  function calculateTax() {
+    if (!validateInputs()) {
+      return;
+    }
+    var age = $("#age").val();
+    var income = parseFloat($("#income").val());
+    var extraIncome = parseFloat($("#extraIncome").val());
+    var deductions = parseFloat($("#deductions").val());
 
-  if (overallIncome <= 800000) {
-    taxAmount = 0;
-  } else {
-    const taxableIncome = overallIncome - 800000;
-    if (age < 40) {
+    var taxRate = 0;
+    if (age === "<40") {
       taxRate = 0.3;
-    } else if (age >= 40 && age < 60) {
+    } else if (age === ">=40&<60") {
       taxRate = 0.4;
     } else {
       taxRate = 0.1;
     }
-    taxAmount = taxableIncome * taxRate;
+
+    var totalIncome = income + extraIncome - deductions;
+    var taxAmount = totalIncome > 800000 ? (totalIncome - 800000) * taxRate : 0;
+
+    $("#resultBody").html(
+      "<p>Total Income: " +
+        totalIncome.toFixed(2) +
+        "</p>" +
+        "<p>Tax Amount: " +
+        taxAmount.toFixed(2) +
+        "</p>"
+    );
+    $("#resultModal").modal("show");
   }
 
-  // Display the results in a modal
-  showResultModal(overallIncome, taxAmount);
-}
-
-// Function to show the result modal
-function showResultModal(overallIncome, taxAmount) {
-  // Create the modal element
-  const modal = document.createElement("div");
-  modal.classList.add("modal");
-
-  // Create the modal content
-  const modalContent = document.createElement("div");
-  modalContent.classList.add("modal-content");
-
-  const modalHeader = document.createElement("h2");
-  modalHeader.textContent = "Tax Calculation Results";
-
-  const modalBody = document.createElement("div");
-  modalBody.innerHTML = `
-    <p>Overall Income: ₹${overallIncome.toLocaleString()} Lakhs</p>
-    <p>Total Tax: ₹${taxAmount.toLocaleString()} Lakhs</p>
-  `;
-
-  const closeButton = document.createElement("button");
-  closeButton.classList.add("close-button");
-  closeButton.textContent = "Close";
-  closeButton.addEventListener("click", () => {
-    modal.style.display = "none";
+  $("input[type='text']").on("input", function () {
+    validateInputs();
   });
 
-  modalContent.appendChild(modalHeader);
-  modalContent.appendChild(modalBody);
-  modalContent.appendChild(closeButton);
-  modal.appendChild(modalContent);
-
-  // Add the modal to the document
-  document.body.appendChild(modal);
-
-  // Show the modal
-  modal.style.display = "block";
-}
+  $("#calculateBtn").click(function () {
+    calculateTax();
+  });
+});
